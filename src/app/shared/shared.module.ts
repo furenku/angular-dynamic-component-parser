@@ -6,6 +6,7 @@ import { ComponentHostDirective } from './component-host.directive';
   imports: [
     CommonModule
   ],
-  declarations: [ComponentHostDirective]
+  declarations: [ComponentHostDirective],
+  exports: [ComponentHostDirective],
 })
 export class SharedModule { }

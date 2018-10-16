@@ -28,18 +28,20 @@ export class ContentPreviewComponent implements OnInit {
       this.currentContents = currentContents;
       
     });
-    
+       
+
   }
+
 
 
   loadComponent() {
     // this.currentAdIndex = (this.currentAdIndex + 1) % this.ads.length;
     // let adItem = this.ads[this.currentAdIndex];
 
-    let componentFactory = this.componentFactoryResolver.resolveComponentFactory(adItem.component);
+    // let componentFactory = this.componentFactoryResolver.resolveComponentFactory(adItem.component);
 
-    let viewContainerRef = this.componentHost.viewContainerRef;
-    viewContainerRef.clear();
+    // let viewContainerRef = this.componentHost.viewContainerRef;
+    // viewContainerRef.clear();
 
     // let componentRef = viewContainerRef.createComponent(componentFactory);
     // (<TestComponent>componentRef.instance).data = adItem.data;

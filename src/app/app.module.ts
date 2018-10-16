@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { ContentCaptureModule } from './content-capture/content-capture.module';
 import { ContentComponentsModule } from './content-components/content-components.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -11,8 +12,9 @@ import { ContentComponentsModule } from './content-components/content-components
   ],
   imports: [
     BrowserModule,
-    ContentCaptureModule,
-    ContentComponentsModule
+    SharedModule,
+    ContentComponentsModule,
+    ContentCaptureModule
   ],
   providers: [],
   bootstrap: [AppComponent]

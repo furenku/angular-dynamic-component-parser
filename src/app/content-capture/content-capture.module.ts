@@ -5,6 +5,8 @@ import { ContentPreviewComponent } from './content-preview/content-preview.compo
 import { ContentCaptureService } from './content-capture.service';
 
 import { ReactiveFormsModule } from '@angular/forms';
+import { ContentComponentsModule } from '../content-components/content-components.module';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   providers: [
@@ -12,7 +14,9 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    SharedModule,
+    ReactiveFormsModule,
+    ContentComponentsModule
   ],
   declarations: [ContentEditorComponent, ContentPreviewComponent],
   exports: [ContentEditorComponent, ContentPreviewComponent]
