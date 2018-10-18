@@ -23,9 +23,7 @@ export class ContentEditorComponent implements OnInit {
 
     let content = this.contentInput.value
     let results = this.contentCaptureService.parseComponents( content )
-    
-    console.log(results);
-    
+      
   }
 
 

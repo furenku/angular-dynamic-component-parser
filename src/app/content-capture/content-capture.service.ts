@@ -3,6 +3,9 @@ import {
 } from '@angular/core';
 
 import { Observable, BehaviorSubject } from 'rxjs';
+import { ComponentContainer } from '../content-components/component-container/component-container.component';
+import { TestComponentComponent } from '../content-components/test-component/test-component.component';
+import { DynamicComponent } from '../shared/models/dynamic-component.model';
 
 
 const parameterNames = [
@@ -19,14 +22,20 @@ const parameterNames = [
 })
 export class ContentCaptureService {
 
-  public currentContents: BehaviorSubject<any[]> = new BehaviorSubject([]);
+  public currentContents: BehaviorSubject<ComponentContainer[]>;
+  
+  
+  constructor() {
+    
+    this.currentContents = new BehaviorSubject([]);
 
-  constructor() {}
+  }
 
 
 
 
-  getComponentParameters(attrsStr) {
+  getComponentParameters(attrsStr) : DynamicComponent {
+    
     if (attrsStr.startsWith(" ")) {
 
       attrsStr = attrsStr.slice(1)
@@ -35,7 +44,7 @@ export class ContentCaptureService {
 
     let attrs = attrsStr.split(" ")
 
-    let paramObj = {};
+    let paramObj = { data: '', type: 0 };
 
     attrs.forEach(attr => {
 
@@ -104,19 +113,22 @@ export class ContentCaptureService {
       return this.getComponentParameters(componentString)
     });
 
+    let resultComponents = results.map( result => {
+      console.log( result.type );
+      return new ComponentContainer(TestComponentComponent, {title: 'Título', content: 'Reprehenderit tempor excepteur amet mollit.'})  
+    });
 
-    this.currentContents.next( results );
+    this.currentContents.next( resultComponents );
 
-    return results
+    return resultComponents
 
   }
 
-  getCurrentContents(): BehaviorSubject<any[]> {
+  getCurrentContents(): BehaviorSubject<ComponentContainer[]> {
     
     return this.currentContents;
 
   }
-
 
 
 }

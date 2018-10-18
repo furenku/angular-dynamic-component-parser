@@ -3,6 +3,9 @@ import { ContentCaptureService } from '../content-capture.service';
 
 import { ComponentFactoryResolver } from '@angular/core';
 import { ComponentHostDirective } from '../../shared/component-host.directive';
+import { ComponentContainer } from '../../content-components/component-container/component-container.component';
+import { TestComponentComponent } from '../../content-components/test-component/test-component.component';
+
 
 @Component({
   selector: 'content-preview',
@@ -13,7 +16,8 @@ export class ContentPreviewComponent implements OnInit {
 
   @ViewChild(ComponentHostDirective) componentHost: ComponentHostDirective;
 
-  public currentContents : any[];
+  public currentContents : ComponentContainer[];
+
 
   constructor(
     private contentCaptureService: ContentCaptureService,
@@ -26,7 +30,8 @@ export class ContentPreviewComponent implements OnInit {
     .subscribe( currentContents => {
     
       this.currentContents = currentContents;
-      
+      this.loadComponent()
+
     });
        
 
@@ -35,17 +40,29 @@ export class ContentPreviewComponent implements OnInit {
 
 
   loadComponent() {
+
+    let viewContainerRef = this.componentHost.viewContainerRef;
+    viewContainerRef.clear();
+    
+    this.currentContents.forEach( componentContainer => {
+
+      console.log("componentContainer",componentContainer);
+      
+        
+      let componentFactory = this.componentFactoryResolver.resolveComponentFactory(componentContainer.component);
+
+
+      let componentRef = viewContainerRef.createComponent(componentFactory);
+      
+      (<TestComponentComponent>componentRef.instance).data = componentContainer.data;
+    
+
+    })
+
+    
     // this.currentAdIndex = (this.currentAdIndex + 1) % this.ads.length;
     // let adItem = this.ads[this.currentAdIndex];
 
-    // let componentFactory = this.componentFactoryResolver.resolveComponentFactory(adItem.component);
-
-    // let viewContainerRef = this.componentHost.viewContainerRef;
-    // viewContainerRef.clear();
-
-    // let componentRef = viewContainerRef.createComponent(componentFactory);
-    // (<TestComponent>componentRef.instance).data = adItem.data;
-  
   }
 
   

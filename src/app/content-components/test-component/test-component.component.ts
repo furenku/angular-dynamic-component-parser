@@ -10,11 +10,16 @@ import { DynamicComponent } from '../../shared/models/dynamic-component.model';
 })
 export class TestComponentComponent implements DynamicComponent {
 
+  @Input() type: number;
   @Input() data: any;
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  handleClick() {
+    alert("click")
   }
 
 }
