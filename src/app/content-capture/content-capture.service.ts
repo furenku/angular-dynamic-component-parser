@@ -4,7 +4,9 @@ import {
 
 import { Observable, BehaviorSubject } from 'rxjs';
 import { ComponentContainer } from '../content-components/component-container/component-container.component';
-import { TestComponentComponent } from '../content-components/test-component/test-component.component';
+import { Type0Component } from '../content-components/type-0-component/type-0-component.component';
+import { Type1Component } from '../content-components/type-1-component/type-1-component.component';
+import { Type2Component } from '../content-components/type-2-component/type-2-component.component';
 import { DynamicComponent } from '../shared/models/dynamic-component.model';
 
 
@@ -75,7 +77,7 @@ export class ContentCaptureService {
   getComponentStrings(content) {
 
     let results = [];
-    let startIdentifier = '[test-component';
+    let startIdentifier = '[bedu-component';
 
     let hasComponents = content.includes(startIdentifier);
 
@@ -114,8 +116,17 @@ export class ContentCaptureService {
     });
 
     let resultComponents = results.map( result => {
-      console.log( result.type );
-      return new ComponentContainer(TestComponentComponent, {title: 'Título', content: 'Reprehenderit tempor excepteur amet mollit.'})  
+      switch( result.type ) {
+        case 0:
+          return new ComponentContainer(Type1Component, { ...result });
+          break;
+        case 1:
+          return new ComponentContainer(Type2Component, { ...result });
+          break;
+        default: 
+          return new ComponentContainer(Type0Component, { ...result });
+          break;
+      }
     });
 
     this.currentContents.next( resultComponents );

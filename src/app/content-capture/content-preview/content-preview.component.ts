@@ -4,7 +4,7 @@ import { ContentCaptureService } from '../content-capture.service';
 import { ComponentFactoryResolver } from '@angular/core';
 import { ComponentHostDirective } from '../../shared/component-host.directive';
 import { ComponentContainer } from '../../content-components/component-container/component-container.component';
-import { TestComponentComponent } from '../../content-components/test-component/test-component.component';
+import { Type1Component } from '../../content-components/type-1-component/type-1-component.component';
 
 
 @Component({
@@ -46,15 +46,11 @@ export class ContentPreviewComponent implements OnInit {
     
     this.currentContents.forEach( componentContainer => {
 
-      console.log("componentContainer",componentContainer);
-      
-        
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(componentContainer.component);
-
 
       let componentRef = viewContainerRef.createComponent(componentFactory);
       
-      (<TestComponentComponent>componentRef.instance).data = componentContainer.data;
+      (<Type1Component>componentRef.instance).data = componentContainer.data;
     
 
     })
