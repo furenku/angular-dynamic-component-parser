@@ -30,7 +30,7 @@ export class ContentPreviewComponent implements OnInit {
     .subscribe( currentContents => {
     
       this.currentContents = currentContents;
-      this.loadComponent()
+      this.loadComponents()
 
     });
        
@@ -39,7 +39,7 @@ export class ContentPreviewComponent implements OnInit {
 
 
 
-  loadComponent() {
+  loadComponents() {
 
     let viewContainerRef = this.componentHost.viewContainerRef;
     viewContainerRef.clear();
@@ -50,22 +50,15 @@ export class ContentPreviewComponent implements OnInit {
 
       let componentRef = viewContainerRef.createComponent(componentFactory);
       
-      (<Type1Component>componentRef.instance).data = componentContainer.data;
+      (componentRef.instance).data = componentContainer.data;
     
 
     })
 
     
-    // this.currentAdIndex = (this.currentAdIndex + 1) % this.ads.length;
-    // let adItem = this.ads[this.currentAdIndex];
-
   }
 
   
-
-  // get testComponentInfo() {
-
-  // }
 
 
 }

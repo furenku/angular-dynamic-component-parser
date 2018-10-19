@@ -36,32 +36,42 @@ export class ContentCaptureService {
 
 
 
-  getComponentParameters(attrsStr) : DynamicComponent {
+  getComponentParameters(contentString) : DynamicComponent {
     
-    if (attrsStr.startsWith(" ")) {
+    let startIdentifier = '[bedu-component';
+    let paramObj;
 
-      attrsStr = attrsStr.slice(1)
+    if(contentString.includes(startIdentifier)) {
+    
+    if (contentString.startsWith(" ")) {
+
+      contentString = contentString.slice(1)
 
     }
 
-    let attrs = attrsStr.split(" ")
+    let attrs = contentString.split(" ")
 
-    let paramObj = { data: '', type: 0 };
+    paramObj = { data: '', type: 0 };
 
     attrs.forEach(attr => {
 
       let key = attr.split("=")[0].replace('\'', "");
       let value = attr.split("=")[1]
 
-      value = value.replace('\'', "").replace(/["']/g, '');
-      if (key == 'type') {
-        value = parseInt(value)
-      }
+      if( !!value ) {
 
 
-      if (parameterNames.includes(key)) {
+        value = value.replace('\'', "").replace(/["']/g, '');
+        if (key == 'type') {
+          value = parseInt(value)
+        }
 
-        paramObj[key] = value;
+
+        if (parameterNames.includes(key)) {
+
+          paramObj[key] = value;
+
+        }
 
       }
 
@@ -69,7 +79,17 @@ export class ContentCaptureService {
     });
 
 
-    return paramObj;
+    
+    
+  } else {
+    
+    paramObj = {
+      // type: -1,
+      content: contentString
+    }
+  }
+  
+  return paramObj;
 
   }
 
@@ -77,29 +97,51 @@ export class ContentCaptureService {
   getComponentStrings(content) {
 
     let results = [];
+
     let startIdentifier = '[bedu-component';
 
     let hasComponents = content.includes(startIdentifier);
 
     let cuttingString = content.slice();
 
-    while (hasComponents) {
+    if( hasComponents ) {
 
-      let startIndex = cuttingString.indexOf(startIdentifier)
-      let substr = cuttingString.substr(startIndex);
+      while ( hasComponents ) {
+
+        let startIndex = cuttingString.indexOf(startIdentifier)
+
+        if( startIndex > 0 ) {
+
+          let previousContent = cuttingString.substr(0,startIndex);
+
+          results.push( previousContent );
+          
+        }
+
+        let substr = cuttingString.substr(startIndex);
 
 
-      let endIndex = substr.indexOf(']')
+        let endIndex = substr.indexOf(']')
 
-      let componentString = substr.slice(0, endIndex + 1)
-      componentString = componentString.replace(startIdentifier, '')
-      componentString = componentString.replace(']', '')
+        let componentString = substr.slice(0, endIndex + 1)
 
-      cuttingString = substr.slice(endIndex + 1)
+        componentString = componentString.replace(']', '')
 
-      results.push(componentString);
+        cuttingString = substr.slice(endIndex + 1)
 
-      hasComponents = cuttingString.includes(startIdentifier);
+        results.push(componentString);
+
+        hasComponents = cuttingString.includes(startIdentifier);
+
+        if( ! hasComponents ) {
+          results.push( cuttingString );
+        }
+
+      }
+    }
+    else {
+
+      results.push( content );
 
     }
 
@@ -110,22 +152,20 @@ export class ContentCaptureService {
 
 
   parseComponents(content) {
-
+    
     let results = this.getComponentStrings(content).map((componentString) => {
       return this.getComponentParameters(componentString)
     });
 
+    
     let resultComponents = results.map( result => {
       switch( result.type ) {
         case 0:
           return new ComponentContainer(Type1Component, { ...result });
-          break;
         case 1:
           return new ComponentContainer(Type2Component, { ...result });
-          break;
         default: 
           return new ComponentContainer(Type0Component, { ...result });
-          break;
       }
     });
 
