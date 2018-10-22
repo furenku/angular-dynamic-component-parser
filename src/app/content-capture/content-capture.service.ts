@@ -94,13 +94,42 @@ export class ContentCaptureService {
   }
 
 
+  getComponentContents( contentString ) {
+
+    let contents = contentString;
+
+    let parsedContents = [];
+
+    let contentStartIdentifier = '[content]';
+    let contentEndIdentifier = '[/content]';
+
+    let hasContents = contents.includes( contentStartIdentifier ) && 
+    contents.includes( contentEndIdentifier );
+    // while( )
+
+    return parsedContents;
+
+  }
+
+
+  getComponentContentParameters( contentString ) {
+    
+    let parsedParameters = [];
+
+    return parsedParameters;
+  
+  }
+
+
   getComponentStrings(content) {
 
     let results = [];
 
     let startIdentifier = '[bedu-component';
+    let endIdentifier = '[/bedu-component]';
 
-    let hasComponents = content.includes(startIdentifier);
+    let hasComponents = content.includes(startIdentifier) && 
+    content.includes(endIdentifier);
 
     let cuttingString = content.slice();
 
@@ -108,7 +137,8 @@ export class ContentCaptureService {
 
       while ( hasComponents ) {
 
-        let startIndex = cuttingString.indexOf(startIdentifier)
+        let startIndex = cuttingString.indexOf(startIdentifier);
+        let endIndex = cuttingString.indexOf(endIdentifier);
 
         if( startIndex > 0 ) {
 
@@ -118,16 +148,17 @@ export class ContentCaptureService {
           
         }
 
-        let substr = cuttingString.substr(startIndex);
+        let substr = cuttingString.substr(startIndex,endIndex);
 
 
-        let endIndex = substr.indexOf(']')
+        // let openIdentifierEndIndex = substr.indexOf(']')
+        // let componentString = substr.slice(openIdentifierEndIndex+1, endIndex-2 )
 
-        let componentString = substr.slice(0, endIndex + 1)
+        let componentString = substr.slice(0, endIndex-2 )
 
-        componentString = componentString.replace(']', '')
+        componentString = componentString.replace( endIdentifier, '')
 
-        cuttingString = substr.slice(endIndex + 1)
+        cuttingString = substr.slice(endIndex +endIdentifier.length )
 
         results.push(componentString);
 
@@ -159,6 +190,8 @@ export class ContentCaptureService {
 
     
     let resultComponents = results.map( result => {
+
+      console.log(result)
       switch( result.type ) {
         case 0:
           return new ComponentContainer(Type1Component, { ...result });
