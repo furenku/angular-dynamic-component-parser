@@ -38,7 +38,7 @@ export class ContentCaptureService {
 
   getComponentParameters(contentString) : DynamicComponent {
     
-    let startIdentifier = '[bedu-component';
+    let startIdentifier = '[test-component';
     let paramObj;
 
     if(contentString.includes(startIdentifier)) {
@@ -125,8 +125,8 @@ export class ContentCaptureService {
 
     let results = [];
 
-    let startIdentifier = '[bedu-component';
-    let endIdentifier = '[/bedu-component]';
+    let startIdentifier = '[test-component';
+    let endIdentifier = '[/test-component]';
 
     let hasComponents = content.includes(startIdentifier) && 
     content.includes(endIdentifier);

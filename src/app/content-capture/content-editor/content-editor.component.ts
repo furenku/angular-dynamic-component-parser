@@ -6,14 +6,14 @@ import { ContentCaptureService } from '../content-capture.service';
 
 const sampleInput = `
 
-[bedu-component type="0" parameter_1="un valor" parameter_2="otro valor"] 
+[test-component type="0" parameter_1="un valor" parameter_2="otro valor"] 
   [content]
     [Officia eu qui incididunt velit adipisicing sit dolor qui ad enim.](http://google.com)
   [/content]
   [content]
     [Pariatur duis aliqua enim irure aliqua ut culpa.](http://google.com)
   [/content]
-[/bedu-component]
+[/test-component]
 
 `;
 
