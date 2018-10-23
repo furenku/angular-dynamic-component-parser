@@ -9,10 +9,18 @@ let sampleInput = `
     parameter_4="..."
     parameter_2="otro ! valor distinto"
 ] 
-    [content][Officia eu qui incididunt velit adipisicing sit dolor qui ad enim.](http://google.com)[/content]
-    [content][Pariatur duis aliqua enim irure aliqua ut culpa.](http://google.co)[/content]
-    [content]abc[/content]
-    [content]123[/content]
+    [content]
+        [Officia eu qui incididunt velit adipisicing sit dolor qui ad enim.](http://google.com)
+    [/content]
+    [content]
+        [Pariatur duis aliqua enim irure aliqua ut culpa.](http://google.co)
+    [/content]
+    [content]
+        abc
+    [/content]
+    [content]
+        123
+    [/content]
 [/test-component]
 
 `;
@@ -145,10 +153,6 @@ function getComponentContents( contentString ) {
     parsedString.includes(contentEndIdentifier)
 
     while( hasComponents ) {
-        console.log(
-            parsedString.indexOf(contentEndIdentifier),
-            parsedString.charAt(parsedString.indexOf(contentEndIdentifier)-2)
-        );
         
         let startIndex = parsedString.indexOf(contentStartIdentifier)+contentStartIdentifier.length;
 
@@ -156,6 +160,9 @@ function getComponentContents( contentString ) {
             startIndex,
             parsedString.indexOf(contentEndIdentifier)-startIndex
         )
+
+        // remove leading and trailing newlines and spaces: 
+        content = content.replace(/^\s+|\s+$/g, '')
 
         parsedString = parsedString.substr(
             parsedString.indexOf(contentEndIdentifier) + contentEndIdentifier.length
@@ -173,4 +180,4 @@ function getComponentContents( contentString ) {
 }
 
 
-console.log(getComponentParameters( sampleInput ));
+console.log(getComponentContents( sampleInput ));
