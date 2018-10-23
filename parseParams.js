@@ -3,9 +3,10 @@ let sampleInput = `
 [test-component
     type="0"
     parameter_1="un valor"
-    parameter_no_value="no value"
+    parameter_no_value
     parameter_n="ignorar"
-    parameter_3="uno final con más palabras"
+    parameter_3
+    parameter_4="..."
     parameter_2="otro ! valor distinto"
 ] 
   [content]
@@ -22,10 +23,11 @@ let sampleInput = `
 
 const parameterNames = [
     "type",
-    "parameter_1", "parameter_2", "parameter_3",
+    "parameter_2", "parameter_3",
+    "parameter_no_value",
+    "parameter_1",
     "parameter_4", "parameter_5", "parameter_6",
     "parameter_7", "parameter_8", "parameter_9",
-    "parameter_no_value",
 ];
   
 
@@ -46,13 +48,13 @@ function getComponentParameters(contentString) {
     paramObj = { data: '', type: 0 };
 
 
-    ESTO ESTA MAL: DEBERIA GUARDARLOS EN EL ORDEN EN QUE APARECEN:
     let foundParameters = parameterNames.filter(
         parameterName => contentString.includes(parameterName)
     );
 
-
+    foundParameters = foundParameters.sort( sort_found );
     
+
     foundParameters.forEach( (foundParameter,index) => {
 
         let parameterStartIndex = contentString.indexOf( foundParameter );
@@ -61,29 +63,33 @@ function getComponentParameters(contentString) {
         
         // if is not last parameter
         if( index + 1 < foundParameters.length ) {
-            
+                        
             parameterEndIndex = contentString.indexOf( foundParameters[ index + 1 ] ); 
                 
         } else {
 
             // if is last parameter
             parameterEndIndex = contentString.indexOf("]")
-            // console.log("is last", foundParameter, contentString.substr(parameterStartIndex));
             
             
         }
-    
-
+        
+        
         let nextString = contentString.substr(
             parameterStartIndex,
             parameterEndIndex
         );
 
+         
         let parameterValueStartsIndex = nextString.indexOf('="')+2;
-        
-        if( parameterValueStartsIndex > -1 ) {
+    
+        if( nextString.indexOf(" ") < nextString.indexOf("=") ) {
+            nextString = nextString.substr( 0, nextString.indexOf(" ") );
+            parameterValueStartsIndex = -1;
+        }
 
-            console.log("no value", foundParameter );
+
+        if( parameterValueStartsIndex > -1 ) {
             
 
             nextString = nextString.substr( parameterValueStartsIndex, parameterEndIndex )
@@ -121,6 +127,12 @@ function getComponentParameters(contentString) {
 }
 
 
+
+function sort_found(a,b) {
+
+    return sampleInput.indexOf(a) > sampleInput.indexOf(b)
+
+}
 
 
 
