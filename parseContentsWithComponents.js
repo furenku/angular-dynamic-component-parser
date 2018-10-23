@@ -9,16 +9,16 @@ let sampleInput = `
     parameter_4="..."
     parameter_2="otro ! valor distinto"
 ] 
-    [content parameter_1="content parameter 1"]
+    [content parameter_1="content parameter 1"  parameter_2="content parameter 2"]
         [Officia eu qui incididunt velit adipisicing sit dolor qui ad enim.](http://google.com)
     [/content]
-    [content]
+    [content parameter_2]
         [Pariatur duis aliqua enim irure aliqua ut culpa.](http://google.co)
     [/content]
     [content]
         abc
     [/content]
-    [content]
+    [content parameter_3 parameter_4="content parameter 4"]
         123
     [/content]
 [/test-component]
@@ -52,7 +52,7 @@ function extractParameters(contentString, startIdentifier) {
 
     }
     
-    paramObj = { data: '', type: 0 };
+    paramObj = {};
 
 
     let foundParameters = parameterNames.filter(
@@ -92,6 +92,7 @@ function extractParameters(contentString, startIdentifier) {
     
         if( nextString.indexOf(" ") < nextString.indexOf("=") ) {
             nextString = nextString.substr( 0, nextString.indexOf(" ") );
+            console.log( "nextString", nextString );
             parameterValueStartsIndex = -1;
         }
 
@@ -107,7 +108,9 @@ function extractParameters(contentString, startIdentifier) {
             if( foundParameter == "type" ) {
                 parameterValue = parseInt( parameterValue );
             }
-
+            if( parameterValue == '' ) {
+                parameterValue = true
+            }
             paramObj[ foundParameter ] = parameterValue;
 
         } else {
@@ -155,6 +158,8 @@ function extractContent( componentString ) {
     return contentString; 
 
 }
+
+
 function getComponentContents( contentString ) {
     
     let contents = [];
@@ -169,11 +174,17 @@ function getComponentContents( contentString ) {
 
     while( hasComponents ) {
         
+
         let contentIdentifierWithParameters = parsedString.substr(
             parsedString.indexOf(contentStartIdentifier),
             parsedString.indexOf(contentStartEndIdentifier)
         ) 
-                
+        
+        let contentParameters = extractParameters( contentIdentifierWithParameters, '[content' )
+        
+        
+        
+        
         let identifierLength = contentIdentifierWithParameters.length;
         
         
@@ -194,7 +205,7 @@ function getComponentContents( contentString ) {
         hasComponents = parsedString.includes(contentStartIdentifier) && 
         parsedString.includes(contentEndIdentifier)
     
-        contents.push( { content } );
+        contents.push( { content, ...contentParameters } );
 
     }
 
