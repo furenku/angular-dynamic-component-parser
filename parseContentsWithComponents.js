@@ -9,7 +9,7 @@ let sampleInput = `
     parameter_4="..."
     parameter_2="otro ! valor distinto"
 ] 
-    [content]
+    [content parameter_1="content parameter 1"]
         [Officia eu qui incididunt velit adipisicing sit dolor qui ad enim.](http://google.com)
     [/content]
     [content]
@@ -74,7 +74,7 @@ function extractParameters(contentString, startIdentifier) {
             parameterEndIndex = contentString.indexOf( foundParameters[ index + 1 ] ); 
                 
         } else {
-
+            
             // if is last parameter
             parameterEndIndex = contentString.indexOf("]")
             
@@ -142,51 +142,24 @@ function sort_found(a,b) {
 }
 
 
-function extractContents( contentString ) {
-    
-    let contents = [];
-    let contentStartIdentifier = '[content]';
-    let contentEndIdentifier = '[/content]';
 
-    let parsedString = contentString.slice()
+function extractContent( componentString ) {
 
-    let hasComponents = parsedString.includes(contentStartIdentifier) && 
-    parsedString.includes(contentEndIdentifier)
+    let endIdentifier = '[/test-component]';
+    let startIndex = componentString.indexOf(']')+1;
+    let contentString = componentString.substr(
+        startIndex,
+        componentString.indexOf(endIdentifier)-startIndex
+    );
 
-    while( hasComponents ) {
-        console.log(
-            parsedString.indexOf(contentEndIdentifier),
-            parsedString.charAt(parsedString.indexOf(contentEndIdentifier)-2)
-        );
-        
-        let startIndex = parsedString.indexOf(contentStartIdentifier)+contentStartIdentifier.length;
+    return contentString; 
 
-        let content = parsedString.substr(
-            startIndex,
-            parsedString.indexOf(contentEndIdentifier)-startIndex
-        )
-
-        parsedString = parsedString.substr(
-            parsedString.indexOf(contentEndIdentifier) + contentEndIdentifier.length
-        );
-
-        hasComponents = parsedString.includes(contentStartIdentifier) && 
-        parsedString.includes(contentEndIdentifier)
-    
-        contents.push( content );
-
-    }
-
-
-    return contents;
 }
-
-
-
 function getComponentContents( contentString ) {
     
     let contents = [];
-    let contentStartIdentifier = '[content]';
+    let contentStartIdentifier = '[content';
+    let contentStartEndIdentifier = ']';
     let contentEndIdentifier = '[/content]';
 
     let parsedString = contentString.slice()
@@ -196,7 +169,15 @@ function getComponentContents( contentString ) {
 
     while( hasComponents ) {
         
-        let startIndex = parsedString.indexOf(contentStartIdentifier)+contentStartIdentifier.length;
+        let contentIdentifierWithParameters = parsedString.substr(
+            parsedString.indexOf(contentStartIdentifier),
+            parsedString.indexOf(contentStartEndIdentifier)
+        ) 
+                
+        let identifierLength = contentIdentifierWithParameters.length;
+        
+        
+        let startIndex = parsedString.indexOf(contentStartIdentifier) + identifierLength;
 
         let content = parsedString.substr(
             startIndex,
@@ -204,7 +185,7 @@ function getComponentContents( contentString ) {
         )
 
         // remove leading and trailing newlines and spaces: 
-        content = content.replace(/^\s+|\s+$/g, '')
+        content = content.trim()//replace(/^\s+|\s+$/g, '')
 
         parsedString = parsedString.substr(
             parsedString.indexOf(contentEndIdentifier) + contentEndIdentifier.length
@@ -222,4 +203,4 @@ function getComponentContents( contentString ) {
 }
 
 
-console.log(getComponentContents( sampleInput ));
+console.log(getComponentContents( extractContent(sampleInput) ));

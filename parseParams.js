@@ -30,9 +30,8 @@ const parameterNames = [
   
 
 
-function getComponentParameters(contentString) {
+function extractParameters(contentString, startIdentifier) {
     
-    let startIdentifier = '[test-component';
     let paramObj;
 
     if(contentString.includes(startIdentifier)) {
@@ -133,7 +132,7 @@ function sort_found(a,b) {
 }
 
 
-function getComponentContents( contentString ) {
+function extractContents( contentString ) {
     
     let contents = [];
     let contentStartIdentifier = '[content]';
@@ -173,4 +172,4 @@ function getComponentContents( contentString ) {
 }
 
 
-console.log(getComponentParameters( sampleInput ));
+console.log(extractParameters( sampleInput, '[test-component' ));
