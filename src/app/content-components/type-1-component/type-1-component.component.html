@@ -1,15 +1,25 @@
 <h1 class="title">
-  {{data.title}}
+  {{data.parameters.title}}
 </h1>
 
 <section class="parameter_1">
-  {{data.parameter_1}}
+  {{data.parameters.parameter_1}}
 </section>
 
 <section class="parameter_2">
-  {{data.parameter_2}}
+  {{data.parameters.parameter_2}}
 </section>
 
 <section class="parameter_3">
-  {{data.parameter_3}}
+  {{data.parameters.parameter_3}}
 </section>
+
+
+
+<ul class="contents">
+
+  <section class="content" *ngFor="let content of data.contents">
+    {{content.content}}
+  </section>
+
+</ul>

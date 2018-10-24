@@ -4,7 +4,6 @@ import { ContentCaptureService } from '../content-capture.service';
 import { ComponentFactoryResolver } from '@angular/core';
 import { ComponentHostDirective } from '../../shared/component-host.directive';
 import { ComponentContainer } from '../../content-components/component-container/component-container.component';
-import { Type1Component } from '../../content-components/type-1-component/type-1-component.component';
 
 
 @Component({

@@ -1,5 +1,13 @@
 let sampleInput = `
 
+# Duis ea reprehenderit est eiusmod.
+
+- a
+- b
+-c
+
+
+
 [test-component
     type="0"
     parameter_1="un valor"
@@ -302,7 +310,8 @@ let componentObjects = getComponentStrings(sampleInput).map( (componentString,in
     
     let contents = getComponentContents( extractContent(componentString) );
     
-    return JSON.stringify({ parameters: componentParameters, contents: contents })
+    return { parameters: componentParameters, contents: contents }
+    // return JSON.stringify({ parameters: componentParameters, contents: contents })
     
     
 })

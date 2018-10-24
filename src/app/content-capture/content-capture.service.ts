@@ -25,7 +25,7 @@ const parameterNames = [
 export class ContentCaptureService {
 
   public currentContents: BehaviorSubject<ComponentContainer[]>;
-  
+  private inputString: String;
   
   constructor() {
     
@@ -34,90 +34,182 @@ export class ContentCaptureService {
   }
 
 
-
-
-  getComponentParameters(contentString) : DynamicComponent {
     
-    let startIdentifier = '[test-component';
+  extractParameters(contentString, startIdentifier) {
+
     let paramObj;
 
-    if(contentString.includes(startIdentifier)) {
-    
-    if (contentString.startsWith(" ")) {
+    if (contentString.includes(startIdentifier)) {
 
-      contentString = contentString.slice(1)
+      if (contentString.startsWith(" ")) {
 
-    }
-
-    let attrs = contentString.split(" ")
-
-    paramObj = { data: '', type: 0 };
-
-    attrs.forEach(attr => {
-
-      let key = attr.split("=")[0].replace('\'', "");
-      let value = attr.split("=")[1]
-
-      if( !!value ) {
-
-
-        value = value.replace('\'', "").replace(/["']/g, '');
-        if (key == 'type') {
-          value = parseInt(value)
-        }
-
-
-        if (parameterNames.includes(key)) {
-
-          paramObj[key] = value;
-
-        }
+        contentString = contentString.slice(1)
 
       }
 
+      paramObj = {};
 
-    });
+
+      let foundParameters = parameterNames.filter(
+        parameterName => contentString.includes(parameterName)
+      );
+
+      foundParameters = foundParameters.sort((a,b)=>this.sort_found(a,b));
 
 
-    
-    
-  } else {
-    
-    paramObj = {
-      // type: -1,
-      content: contentString
+      foundParameters.forEach((foundParameter, index) => {
+
+        let parameterStartIndex = contentString.indexOf(foundParameter);
+
+        let parameterEndIndex = contentString.length;
+
+        // if is not last parameter
+        if (index + 1 < foundParameters.length) {
+
+          parameterEndIndex = contentString.indexOf(foundParameters[index + 1]);
+
+        } else {
+
+          // if is last parameter
+          parameterEndIndex = contentString.indexOf("]")
+
+
+        }
+
+
+        let nextString = contentString.substr(
+          parameterStartIndex,
+          parameterEndIndex
+        );
+
+
+        let parameterValueStartsIndex = nextString.indexOf('="') + 2;
+
+        if (nextString.indexOf(" ") < nextString.indexOf("=")) {
+          nextString = nextString.substr(0, nextString.indexOf(" "));
+          
+          parameterValueStartsIndex = -1;
+        }
+
+
+        if (parameterValueStartsIndex > -1) {
+
+
+          nextString = nextString.substr(parameterValueStartsIndex, parameterEndIndex)
+          let parameterValueEndsIndex = nextString.indexOf('"');
+
+          let parameterValue = nextString.substr(0, parameterValueEndsIndex)
+
+          if (foundParameter == "type") {
+            parameterValue = parseInt(parameterValue);
+          }
+          
+          if (parameterValue == '') {
+            parameterValue = true
+          }
+          paramObj[foundParameter] = parameterValue;
+
+        } else {
+
+          // when no value, store true        
+          paramObj[foundParameter] = true;
+
+        }
+
+      });
+
+
+
+    } else {
+
+      paramObj = {
+        // type: -1,
+        content: contentString
+      }
     }
-  }
-  
-  return paramObj;
+
+    return paramObj;
 
   }
 
 
-  getComponentContents( contentString ) {
 
-    let contents = contentString;
+  sort_found(a, b) {
 
-    let parsedContents = [];
+    return this.inputString.indexOf(a) - this.inputString.indexOf(b)
 
-    let contentStartIdentifier = '[content]';
+  }
+
+
+
+  extractContent(componentString) {
+
+    let endIdentifier = '[/test-component]';
+    let startIndex = componentString.indexOf(']') + 1;
+    let contentString = componentString.substr(
+      startIndex,
+      componentString.indexOf(endIdentifier) - startIndex
+    );
+
+    return contentString;
+
+  }
+
+
+  getComponentContents(contentString) {
+
+    let contents = [];
+    let contentStartIdentifier = '[content';
+    let contentStartEndIdentifier = ']';
     let contentEndIdentifier = '[/content]';
 
-    let hasContents = contents.includes( contentStartIdentifier ) && 
-    contents.includes( contentEndIdentifier );
-    // while( )
+    let parsedString = contentString.slice()
 
-    return parsedContents;
+    let hasComponents = parsedString.includes(contentStartIdentifier) &&
+      parsedString.includes(contentEndIdentifier)
 
-  }
+    while (hasComponents) {
 
 
-  getComponentContentParameters( contentString ) {
-    
-    let parsedParameters = [];
+      let contentIdentifierWithParameters = parsedString.substr(
+        parsedString.indexOf(contentStartIdentifier),
+        parsedString.indexOf(contentStartEndIdentifier)
+      )
 
-    return parsedParameters;
-  
+      let contentParameters = this.extractParameters(contentIdentifierWithParameters, '[content')
+
+
+
+
+      let identifierLength = contentIdentifierWithParameters.length;
+
+
+      let startIndex = parsedString.indexOf(contentStartIdentifier) + identifierLength;
+
+      let content = parsedString.substr(
+        startIndex,
+        parsedString.indexOf(contentEndIdentifier) - startIndex
+      )
+
+      // remove leading and trailing newlines and spaces: 
+      content = content.trim() //replace(/^\s+|\s+$/g, '')
+
+      parsedString = parsedString.substr(
+        parsedString.indexOf(contentEndIdentifier) + contentEndIdentifier.length
+      );
+
+      hasComponents = parsedString.includes(contentStartIdentifier) &&
+        parsedString.includes(contentEndIdentifier)
+
+      contents.push({
+        content,
+        ...contentParameters
+      });
+
+    }
+
+
+    return contents;
   }
 
 
@@ -128,48 +220,56 @@ export class ContentCaptureService {
     let startIdentifier = '[test-component';
     let endIdentifier = '[/test-component]';
 
-    let hasComponents = content.includes(startIdentifier) && 
-    content.includes(endIdentifier);
-
     let cuttingString = content.slice();
 
-    if( hasComponents ) {
 
-      while ( hasComponents ) {
+    let hasComponents = cuttingString.includes(startIdentifier) &&
+      cuttingString.includes(endIdentifier);
+
+
+    if (hasComponents) {
+
+      while (hasComponents) {
 
         let startIndex = cuttingString.indexOf(startIdentifier);
-        let endIndex = cuttingString.indexOf(endIdentifier);
+        let endIndex = cuttingString.indexOf(endIdentifier) + endIdentifier.length;
 
-        if( startIndex > 0 ) {
+        if (startIndex > 0) {
 
-          let previousContent = cuttingString.substr(0,startIndex);
+          let previousContent = cuttingString.substr(0, startIndex);
 
-          results.push( previousContent );
-          
+          if (!!previousContent.trim()) {
+            results.push(previousContent.trim());
+          }
+
         }
 
-        let substr = cuttingString.substr(startIndex,endIndex);
+        //   let substr = cuttingString.substr(startIndex, endIndex);
 
 
-        let componentString = substr.slice(0, endIndex-2 )
+        let componentString = cuttingString.substr(startIndex, endIndex);
 
-        componentString = componentString.replace( endIdentifier, '')
 
-        cuttingString = substr.slice(endIndex +endIdentifier.length )
+        cuttingString = cuttingString.slice(endIndex)
 
-        results.push(componentString);
+        results.push(componentString.trim());
 
-        hasComponents = cuttingString.includes(startIdentifier);
 
-        if( ! hasComponents ) {
-          results.push( cuttingString );
+
+        hasComponents = cuttingString.includes(startIdentifier) &&
+          cuttingString.includes(endIdentifier)
+
+        if (!hasComponents) {
+          if (!!cuttingString.trim()) {
+
+            results.push(cuttingString.trim());
+          }
         }
 
       }
-    }
-    else {
+    } else {
 
-      results.push( content );
+      results.push(content.trim());
 
     }
 
@@ -179,19 +279,36 @@ export class ContentCaptureService {
 
 
 
+
   parseComponents(content) {
     
-    let results = this.getComponentStrings(content).map((componentString) => {
-      return this.getComponentParameters(componentString)
+
+    this.inputString = content;
+    
+    // console.log("content",this.getComponentStrings(content));
+    
+    
+    // return null;
+    let results = this.getComponentStrings(content).map((componentString,index) => {
+
+      let contents = this.getComponentContents( this.extractContent(componentString) );
+
+      let parameters = this.extractParameters(componentString, '[test-component') 
+
+      return { parameters, contents };
+
     });
 
     
+    
     let resultComponents = results.map( result => {
 
-      switch( result.type ) {
-        case 0:
-          return new ComponentContainer(Type1Component, { ...result });
+
+      switch( parseInt(result.parameters.type) ) {
         case 1:
+        
+        return new ComponentContainer(Type1Component, { ...result });
+        case 2:
           return new ComponentContainer(Type2Component, { ...result });
         default: 
           return new ComponentContainer(Type0Component, { ...result });
