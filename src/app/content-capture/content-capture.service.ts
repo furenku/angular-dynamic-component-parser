@@ -151,9 +151,6 @@ export class ContentCaptureService {
         let substr = cuttingString.substr(startIndex,endIndex);
 
 
-        // let openIdentifierEndIndex = substr.indexOf(']')
-        // let componentString = substr.slice(openIdentifierEndIndex+1, endIndex-2 )
-
         let componentString = substr.slice(0, endIndex-2 )
 
         componentString = componentString.replace( endIdentifier, '')
@@ -191,7 +188,6 @@ export class ContentCaptureService {
     
     let resultComponents = results.map( result => {
 
-      console.log(result)
       switch( result.type ) {
         case 0:
           return new ComponentContainer(Type1Component, { ...result });
