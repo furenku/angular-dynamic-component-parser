@@ -4,7 +4,7 @@ let sampleInput = `
 
 - a
 - b
--c
+- c
 
 
 
@@ -33,6 +33,14 @@ let sampleInput = `
 
 
 
+# Ad amet consectetur exercitation consectetur mollit id officia veniam dolore eu dolore.
+
+- ab
+- bc
+- cd
+
+
+
 [test-component
     type="1"
     parameter_1="2o componente"
@@ -41,6 +49,14 @@ let sampleInput = `
         second component
     [/content]
 [/test-component]
+
+
+# Ad amet consectetur exercitation consectetur mollit id officia veniam dolore eu dolore.
+
+- abc
+- bcd
+- cde
+
 `;
 
 
@@ -114,7 +130,7 @@ function extractParameters(contentString, startIdentifier) {
         parameterValueStartsIndex = -1;
       }
 
-
+      
       if (parameterValueStartsIndex > -1) {
 
 
@@ -126,7 +142,7 @@ function extractParameters(contentString, startIdentifier) {
         if (foundParameter == "type") {
           parameterValue = parseInt(parameterValue);
         }
-        if (parameterValue == '') {
+        if (parameterValue === '') {
           parameterValue = true
         }
         paramObj[foundParameter] = parameterValue;
@@ -259,9 +275,17 @@ function getComponentStrings(content) {
       if (startIndex > 0) {
 
         let previousContent = cuttingString.substr(0, startIndex);
-
+        
+        
         if (!!previousContent.trim()) {
-          results.push(previousContent.trim());
+
+          let newComponent = '[test-component type="0"]';
+          newComponent += '[content]';
+          newComponent += previousContent.trim();
+          newComponent += '[/content]';
+          newComponent += '[/test-component]';
+          
+          results.push( newComponent );
         }
 
       }
@@ -284,7 +308,14 @@ function getComponentStrings(content) {
       if (!hasComponents) {
         if (!!cuttingString.trim()) {
 
-          results.push(cuttingString.trim());
+          let newComponent = '[test-component type="0"]';
+          newComponent += '[content]';
+          newComponent += cuttingString.trim();
+          newComponent += '[/content]';
+          newComponent += '[/test-component]';
+          
+          results.push( newComponent );
+  
         }
       }
 

@@ -1,3 +1,7 @@
-<p (click)="handleClick()">
-  {{ data.content }}
-</p>
+<ul class="contents">
+
+  <section class="content" *ngFor="let content of data.contents">
+    {{content.content}}
+  </section>
+
+</ul>

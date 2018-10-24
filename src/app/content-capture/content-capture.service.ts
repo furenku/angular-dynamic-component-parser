@@ -215,67 +215,85 @@ export class ContentCaptureService {
 
   getComponentStrings(content) {
 
-    let results = [];
 
-    let startIdentifier = '[test-component';
-    let endIdentifier = '[/test-component]';
+  let results = [];
 
-    let cuttingString = content.slice();
+  let startIdentifier = '[test-component';
+  let endIdentifier = '[/test-component]';
 
-
-    let hasComponents = cuttingString.includes(startIdentifier) &&
-      cuttingString.includes(endIdentifier);
+  let cuttingString = content.slice();
 
 
-    if (hasComponents) {
-
-      while (hasComponents) {
-
-        let startIndex = cuttingString.indexOf(startIdentifier);
-        let endIndex = cuttingString.indexOf(endIdentifier) + endIdentifier.length;
-
-        if (startIndex > 0) {
-
-          let previousContent = cuttingString.substr(0, startIndex);
-
-          if (!!previousContent.trim()) {
-            results.push(previousContent.trim());
-          }
-
-        }
-
-        //   let substr = cuttingString.substr(startIndex, endIndex);
+  let hasComponents = cuttingString.includes(startIdentifier) &&
+    cuttingString.includes(endIdentifier);
 
 
-        let componentString = cuttingString.substr(startIndex, endIndex);
+  if (hasComponents) {
 
+    while (hasComponents) {
 
-        cuttingString = cuttingString.slice(endIndex)
+      let startIndex = cuttingString.indexOf(startIdentifier);
+      let endIndex = cuttingString.indexOf(endIdentifier) + endIdentifier.length;
 
-        results.push(componentString.trim());
+      if (startIndex > 0) {
 
+        let previousContent = cuttingString.substr(0, startIndex);
+        
+        
+        if (!!previousContent.trim()) {
 
-
-        hasComponents = cuttingString.includes(startIdentifier) &&
-          cuttingString.includes(endIdentifier)
-
-        if (!hasComponents) {
-          if (!!cuttingString.trim()) {
-
-            results.push(cuttingString.trim());
-          }
+          let newComponent = '[test-component type="0"]';
+          newComponent += '[content]';
+          newComponent += previousContent.trim();
+          newComponent += '[/content]';
+          newComponent += '[/test-component]';
+          
+          results.push( newComponent );
         }
 
       }
-    } else {
 
-      results.push(content.trim());
+      //   let substr = cuttingString.substr(startIndex, endIndex);
+
+
+      let componentString = cuttingString.substr(startIndex, endIndex);
+
+
+      cuttingString = cuttingString.slice(endIndex)
+
+      results.push(componentString.trim());
+
+
+
+      hasComponents = cuttingString.includes(startIdentifier) &&
+        cuttingString.includes(endIdentifier)
+
+      if (!hasComponents) {
+        if (!!cuttingString.trim()) {
+
+          let newComponent = '[test-component type="0"]';
+          newComponent += '[content]';
+          newComponent += cuttingString.trim();
+          newComponent += '[/content]';
+          newComponent += '[/test-component]';
+          
+          results.push( newComponent );
+  
+        }
+      }
 
     }
+  } else {
 
-    return results;
+    results.push(content.trim());
 
   }
+
+  return results;
+
+
+
+}
 
 
 
