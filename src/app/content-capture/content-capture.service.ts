@@ -145,9 +145,9 @@ export class ContentCaptureService {
   extractContent(componentString) {
 
     let endIdentifier = '[/test-component]';
-    let startIndex = componentString.indexOf(']') + 1;
+    let startIndex = componentString.indexOf(']') ;
     let contentString = componentString.substr(
-      startIndex,
+      startIndex+1,
       componentString.indexOf(endIdentifier) - startIndex
     );
 
@@ -184,12 +184,13 @@ export class ContentCaptureService {
       let identifierLength = contentIdentifierWithParameters.length;
 
 
-      let startIndex = parsedString.indexOf(contentStartIdentifier) + identifierLength;
+      let startIndex = parsedString.indexOf(contentStartIdentifier) + identifierLength + 1;
 
       let content = parsedString.substr(
         startIndex,
         parsedString.indexOf(contentEndIdentifier) - startIndex
       )
+      console.log("coponentString",content);
 
       // remove leading and trailing newlines and spaces: 
       content = content.trim() //replace(/^\s+|\s+$/g, '')
@@ -200,6 +201,7 @@ export class ContentCaptureService {
 
       hasComponents = parsedString.includes(contentStartIdentifier) &&
         parsedString.includes(contentEndIdentifier)
+
 
       contents.push({
         content,
@@ -245,6 +247,7 @@ export class ContentCaptureService {
           let newComponent = '[test-component type="0"]';
           newComponent += '[content]';
           newComponent += previousContent.trim();
+
           newComponent += '[/content]';
           newComponent += '[/test-component]';
           
@@ -265,8 +268,10 @@ export class ContentCaptureService {
 
 
 
+
       hasComponents = cuttingString.includes(startIdentifier) &&
         cuttingString.includes(endIdentifier)
+
 
       if (!hasComponents) {
         if (!!cuttingString.trim()) {
@@ -320,12 +325,10 @@ export class ContentCaptureService {
     
     
     let resultComponents = results.map( result => {
-
-
+      
       switch( parseInt(result.parameters.type) ) {
-        case 1:
-        
-        return new ComponentContainer(Type1Component, { ...result });
+        case 1:      
+          return new ComponentContainer(Type1Component, { ...result });
         case 2:
           return new ComponentContainer(Type2Component, { ...result });
         default: 
