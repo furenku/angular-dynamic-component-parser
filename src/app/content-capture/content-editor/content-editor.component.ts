@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { FormControl } from '@angular/forms';
 
-import { ContentCaptureService } from '../content-capture.service';
+import { ComponentParserService } from '../../component-builder/component-parser.service';
 
 const sampleInput = `
 
@@ -76,7 +76,7 @@ export class ContentEditorComponent implements OnInit {
 
   private contentInput = new FormControl();
 
-  constructor( private contentCaptureService: ContentCaptureService ) { }
+  constructor( private contentCaptureService: ComponentParserService ) { }
 
   ngOnInit() {
 

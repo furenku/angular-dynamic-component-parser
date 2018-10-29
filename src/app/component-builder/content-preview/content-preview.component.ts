@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ContentCaptureService } from '../content-capture.service';
+import { ComponentParserService } from '../component-parser.service';
 
 import { ComponentFactoryResolver } from '@angular/core';
-import { ComponentHostDirective } from '../../shared/component-host.directive';
+import { ComponentHostDirective } from '../directives/component-host.directive';
 import { ComponentContainer } from '../../content-components/component-container/component-container.component';
 
 
@@ -19,13 +19,13 @@ export class ContentPreviewComponent implements OnInit {
 
 
   constructor(
-    private contentCaptureService: ContentCaptureService,
+    private componentParserService: ComponentParserService,
     private componentFactoryResolver: ComponentFactoryResolver
   ) { }
 
   ngOnInit() {
     
-    this.contentCaptureService.getCurrentContents()
+    this.componentParserService.getCurrentContents()
     .subscribe( currentContents => {
     
       this.currentContents = currentContents;

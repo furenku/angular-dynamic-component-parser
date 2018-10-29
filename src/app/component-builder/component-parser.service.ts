@@ -22,7 +22,7 @@ const parameterNames = [
 @Injectable({
   providedIn: 'root'
 })
-export class ContentCaptureService {
+export class ComponentParserService {
 
   public currentContents: BehaviorSubject<ComponentContainer[]>;
   private inputString: String;
@@ -190,7 +190,7 @@ export class ContentCaptureService {
         startIndex,
         parsedString.indexOf(contentEndIdentifier) - startIndex
       )
-      console.log("coponentString",content);
+      // console.log("coponentString",content);
 
       // remove leading and trailing newlines and spaces: 
       content = content.trim() //replace(/^\s+|\s+$/g, '')
@@ -308,7 +308,7 @@ export class ContentCaptureService {
 
     this.inputString = content;
     
-    // console.log("content",this.getComponentStrings(content));
+    console.log("parseComponents",content);
     
     
     // return null;
